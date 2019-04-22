@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using BugTracking.Api.Infrastructure.Repository;
+using BugTracking.Api.Infrastructure.Repository.Interfaces;
+using BugTracking.Api.Infrastructure.Services;
+using BugTracking.Api.Infrastructure.Services.Interfaces;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +33,16 @@ namespace BugTracking.Api
                 c.SwaggerDoc("v1", new Info { Title = "BugTracking API", Version = "v1", Description = "This is a simple API for BugTracking." });
             });
 
+            services.AddAutoMapper();
+
             var mySqlConnectionString = Configuration.GetConnectionString("DefaultMySqlConnection");
             services.AddDbContext<BugTrackingDbContext>(options => options.UseMySQL(mySqlConnectionString));
+
+            services.AddTransient<ProjectRepository, ProjectRepository>();
+            services.AddTransient<TaskRepository, TaskRepository>();
+
+            services.AddTransient<IProjectService, ProjectService>();
+            services.AddTransient<ITaskService, TaskService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

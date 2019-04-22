@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Linq;
+using System.Threading.Tasks;
 
 namespace BugTracking.Api.Infrastructure.Repository.Interfaces
 {
-    public interface IBaseRepository
+    public interface IBaseRepository<TEntity>
     {
-        IEnumerable<T> AllAsync<T>();
-
-        T GetByIdAsync<T>(int i);
-        void InsertAsync<T>(T item);
-        void UpdateAsync<T>(T item);
-        void DeleteAsync<T>(T item);
-        void DeleteByIdAsync<T>(int i);
+        IQueryable<TEntity> All();
+        Task<TEntity> GetByIdAsync(uint id);
+        Task InsertAsync(TEntity item);
+        Task UpdateAsync(TEntity item);
+        Task DeleteAsync(TEntity item);
+        Task DeleteByIdAsync(uint id);
     }
 }

@@ -1,38 +1,67 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using BugTracking.Api.Infrastructure.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugTracking.Api.Infrastructure.Repository
 {
-    public class BaseRepository : IBaseRepository
+    public class BaseRepository<TEntity, TContext> : IBaseRepository<TEntity> 
+        where TEntity : Models.BaseModelExtended 
+        where TContext : DbContext
     {
-        public IEnumerable<T> AllAsync<T>()
+        protected readonly TContext DbContext;
+
+        public BaseRepository(TContext dbContext)
         {
-            throw new System.NotImplementedException();
+            DbContext = dbContext;
         }
 
-        public T GetByIdAsync<T>(int i)
+        public IQueryable<TEntity> All()
         {
-            throw new System.NotImplementedException();
+            return DbContext.Set<TEntity>(); 
         }
 
-        public void InsertAsync<T>(T item)
+        public async Task<TEntity> GetByIdAsync(uint id)
         {
-            throw new System.NotImplementedException();
+            return await DbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public void UpdateAsync<T>(T item)
+        public async Task InsertAsync(TEntity item)
         {
-            throw new System.NotImplementedException();
+            var dtNow = DateTime.Now;
+
+            item.CreatedDate = dtNow;
+            item.ModifiedDate = dtNow;
+
+            await DbContext.Set<TEntity>().AddAsync(item);
+
+            await DbContext.SaveChangesAsync();
         }
 
-        public void DeleteAsync<T>(T item)
+        public async Task UpdateAsync(TEntity item)
         {
-            throw new System.NotImplementedException();
+            var dtNow = DateTime.Now;
+
+            item.ModifiedDate = dtNow;
+
+            DbContext.Set<TEntity>().Update(item);
+
+            await DbContext.SaveChangesAsync();
         }
 
-        public void DeleteByIdAsync<T>(int i)
+        public async Task DeleteAsync(TEntity item)
         {
-            throw new System.NotImplementedException();
+            DbContext.Set<TEntity>().Remove(item);
+
+            await DbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteByIdAsync(uint id)
+        {
+            var item = await GetByIdAsync(id);
+
+            await DeleteAsync(item);
         }
     }
 }
