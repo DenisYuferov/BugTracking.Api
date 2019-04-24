@@ -7,6 +7,7 @@ using BugTracking.Models.Responses;
 
 namespace BugTracking.Api.Controllers
 {
+    // Projects controller
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase
@@ -27,9 +28,9 @@ namespace BugTracking.Api.Controllers
 
         // GET api/projects/id
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectResponse>> Get(uint id)
+        public async Task<ActionResult<ProjectResponse>> Get(int id)
         {
-            return await _projectService.GetProjectByIdAsync(id);
+            return await _projectService.GetProjectAsync(id);
         }
 
         // POST api/projects
@@ -41,16 +42,23 @@ namespace BugTracking.Api.Controllers
 
         // PUT api/projects/id
         [HttpPut("{id}")]
-        public async Task Put(uint id, [FromBody] ProjectRequest value)
+        public async Task<ActionResult> Put(int id, [FromBody] ProjectRequest value)
         {
-            await _projectService.ChangeProjectAsync(id, value);
+            return await _projectService.ChangeProjectAsync(id, value);
         }
 
         // DELETE api/projects/id
         [HttpDelete("{id}")]
-        public async Task Delete(uint id)
+        public async Task<ActionResult> Delete(int id)
         {
-            await _projectService.DeleteProjectAsync(id);
+            return await _projectService.DeleteProjectAsync(id);
+        }
+
+        // GET api/projects/id/tasks
+        [HttpGet("{id}/Tasks")]
+        public async Task<ActionResult<List<TaskResponse>>> GetTasks(int id)
+        {
+            return await _projectService.GetTasksByProjectIdAsync(id);
         }
     }
 }

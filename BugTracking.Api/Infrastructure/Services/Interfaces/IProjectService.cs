@@ -9,9 +9,10 @@ namespace BugTracking.Api.Infrastructure.Services.Interfaces
     public interface IProjectService
     {
         Task<ActionResult<List<ProjectResponse>>> GetProjectsAsync();
-        Task<ActionResult<ProjectResponse>> GetProjectByIdAsync(uint id);
+        Task<ActionResult<ProjectResponse>> GetProjectAsync(int id);
         Task AddProjectAsync(ProjectRequest projectRequest);
-        Task ChangeProjectAsync(uint id, ProjectRequest projectRequest);
-        Task DeleteProjectAsync(uint id);
+        Task<ActionResult> ChangeProjectAsync(int id, ProjectRequest projectRequest);
+        Task<ActionResult> DeleteProjectAsync(int id);
+        Task<ActionResult<List<TaskResponse>>> GetTasksByProjectIdAsync(int id);
     }
 }

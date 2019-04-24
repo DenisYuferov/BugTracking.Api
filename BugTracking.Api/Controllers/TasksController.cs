@@ -1,42 +1,57 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using BugTracking.Api.Infrastructure.Services.Interfaces;
+using BugTracking.Models.Requests;
+using BugTracking.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BugTracking.Api.Controllers
 {
+    // Tasks controller
     [Route("api/[controller]")]
     [ApiController]
     public class TasksController : ControllerBase
     {
-        // GET api/tasks
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        private readonly ITaskService _taskService;
+
+        public TasksController(ITaskService taskService)
         {
-            return new string[] { "value1", "value2" };
+            _taskService = taskService;
+        }
+
+        // POST api/tasks
+        [HttpPost("GetAll")]
+        public async Task<ActionResult<List<TaskResponse>>> GetAll([FromBody] TasksRequest tasksRequest)
+        {
+            return await _taskService.GetTasksAsync(tasksRequest);
         }
 
         // GET api/tasks/id
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public async Task<ActionResult<TaskResponse>> Get(int id)
         {
-            return "value";
+            return await _taskService.GetTaskAsync(id);
         }
 
         // POST api/tasks
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> Post([FromBody] TaskAddRequest addTaskRequest)
         {
+            return await _taskService.AddTaskAsync(addTaskRequest);
         }
 
         // PUT api/tasks/id
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult> Put(int id, [FromBody] TaskChangeRequest taskChangeRequest)
         {
+            return await _taskService.ChangeTaskAsync(id, taskChangeRequest);
         }
 
         // DELETE api/tasks/id
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            return await _taskService.DeleteTaskAsync(id);
         }
     }
 }

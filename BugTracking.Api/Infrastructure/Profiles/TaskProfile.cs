@@ -9,7 +9,7 @@ namespace BugTracking.Api.Infrastructure.Profiles
     {
         public TaskProfile()
         {
-            CreateMap<Task, TaskRequest>();
+            CreateMap<TaskAddRequest, Task> ();
             CreateMap<Task, TaskResponse>();
         }
     }

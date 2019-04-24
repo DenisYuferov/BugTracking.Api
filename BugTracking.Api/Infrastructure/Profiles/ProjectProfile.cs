@@ -9,7 +9,7 @@ namespace BugTracking.Api.Infrastructure.Profiles
     {
         public ProjectProfile()
         {
-            CreateMap<Project, ProjectRequest>();
+            CreateMap<ProjectRequest, Project>();
             CreateMap<Project, ProjectResponse>();
         }
     }

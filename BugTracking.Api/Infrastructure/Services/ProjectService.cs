@@ -10,6 +10,7 @@ using BugTracking.Models.Responses;
 
 namespace BugTracking.Api.Infrastructure.Services
 {
+    /// <summary> Project service </summary>
     public class ProjectService : IProjectService
     {
         private readonly ProjectRepository _projectRepository;
@@ -21,7 +22,7 @@ namespace BugTracking.Api.Infrastructure.Services
             _mapper = mapper;
             _projectRepository = projectRepository;
         }
-
+        /// <summary> Get projects </summary>
         public async Task<ActionResult<List<ProjectResponse>>> GetProjectsAsync()
         {
             var projectList = await _projectRepository.All().ToListAsync();
@@ -31,15 +32,19 @@ namespace BugTracking.Api.Infrastructure.Services
             return projectResponseList;
         }
 
-        public async Task<ActionResult<ProjectResponse>> GetProjectByIdAsync(uint id)
+        /// <summary> Get project </summary>
+        public async Task<ActionResult<ProjectResponse>> GetProjectAsync(int id)
         {
             var project = await _projectRepository.GetByIdAsync(id);
 
+            if (project == null) return new NotFoundObjectResult($"Project is not found with id:{id}");
+            
             var projectResponse = _mapper.Map<ProjectResponse>(project);
 
             return projectResponse;
         }
 
+        /// <summary> Add project </summary>
         public async Task AddProjectAsync(ProjectRequest projectRequest)
         {
             var project = _mapper.Map<Models.Project>(projectRequest);
@@ -47,16 +52,38 @@ namespace BugTracking.Api.Infrastructure.Services
             await _projectRepository.InsertAsync(project);
         }
 
-        public async Task ChangeProjectAsync(uint id, ProjectRequest projectRequest)
+        /// <summary> Change project </summary>
+        public async Task<ActionResult> ChangeProjectAsync(int id, ProjectRequest projectRequest)
         {
             var project = _mapper.Map<Models.Project>(projectRequest);
 
-            await _projectRepository.UpdateProjectById(id, project);
+            var result = await _projectRepository.UpdateProjectById(id, project);
+
+            if (!result) return new NotFoundObjectResult($"Project is not found with id:{id}");
+
+            return new OkResult();
         }
 
-        public async Task DeleteProjectAsync(uint id)
+        /// <summary> Delete project </summary>
+        public async Task<ActionResult> DeleteProjectAsync(int id)
         {
-            await _projectRepository.DeleteByIdAsync(id);
+            var result = await _projectRepository.DeleteByIdAsync(id);
+
+            if (!result) return new NotFoundObjectResult($"Project is not found with id:{id}");
+
+            return new OkResult();
+        }
+
+        /// <summary> Get tasks by project id </summary>
+        public async Task<ActionResult<List<TaskResponse>>> GetTasksByProjectIdAsync(int id)
+        {
+            var project = await _projectRepository.GetProjectByIdWithTasksAsync(id);
+
+            if (project == null) return new NotFoundObjectResult($"Project is not found with id:{id}");
+
+            var taskResponseList = _mapper.Map<List<TaskResponse>>(project.Tasks);
+
+            return taskResponseList;
         }
     }
 }

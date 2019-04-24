@@ -2,8 +2,8 @@
 {
     public class TaskResponse : BaseModelExtended
     {
-        public uint ProjectId { get; set; }
-        public uint Priority { get; set; }
-        public uint StatusId { get; set; }
+        public int ProjectId { get; set; }
+        public int Priority { get; set; }
+        public int StatusId { get; set; }
     }
 }

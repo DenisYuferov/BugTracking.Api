@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BugTracking.Api.Infrastructure.Repository;
-using BugTracking.Api.Infrastructure.Repository.Interfaces;
 using BugTracking.Api.Infrastructure.Services;
 using BugTracking.Api.Infrastructure.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -48,7 +47,6 @@ namespace BugTracking.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-
             ConfigureDb(app);
 
             if (env.IsDevelopment())

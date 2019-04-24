@@ -1,6 +1,6 @@
 ﻿namespace BugTracking.Models.Requests
 {
-    public class TaskRequest : TaskAddRequest
+    public class TaskChangeRequest : BaseRequest
     {
         public int StatusId { get; set; }
     }

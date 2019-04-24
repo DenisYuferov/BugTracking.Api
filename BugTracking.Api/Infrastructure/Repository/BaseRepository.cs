@@ -22,7 +22,7 @@ namespace BugTracking.Api.Infrastructure.Repository
             return DbContext.Set<TEntity>(); 
         }
 
-        public async Task<TEntity> GetByIdAsync(uint id)
+        public async Task<TEntity> GetByIdAsync(int id)
         {
             return await DbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
         }
@@ -31,8 +31,8 @@ namespace BugTracking.Api.Infrastructure.Repository
         {
             var dtNow = DateTime.Now;
 
-            item.CreatedDate = dtNow;
-            item.ModifiedDate = dtNow;
+            item.CreationDate = dtNow;
+            item.ModificationDate = dtNow;
 
             await DbContext.Set<TEntity>().AddAsync(item);
 
@@ -43,7 +43,7 @@ namespace BugTracking.Api.Infrastructure.Repository
         {
             var dtNow = DateTime.Now;
 
-            item.ModifiedDate = dtNow;
+            item.ModificationDate = dtNow;
 
             DbContext.Set<TEntity>().Update(item);
 
@@ -57,11 +57,15 @@ namespace BugTracking.Api.Infrastructure.Repository
             await DbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteByIdAsync(uint id)
+        public async Task<bool> DeleteByIdAsync(int id)
         {
             var item = await GetByIdAsync(id);
 
+            if (item == null) return false;
+
             await DeleteAsync(item);
+
+            return true;
         }
     }
 }
